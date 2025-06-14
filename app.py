@@ -2,7 +2,7 @@ import requests
 from flask import Flask, request, jsonify
 from base64 import b64encode
 import os
-import json  # para imprimir JSON legível
+import json
 
 app = Flask(__name__)
 
@@ -10,7 +10,18 @@ app = Flask(__name__)
 ZENDESK_SUBDOMINIO = 'conbcrcxfabio1745583316'
 ZENDESK_EMAIL = 'consultoriazendesk@bcrcx.com/token'
 ZENDESK_TOKEN = 'RJ2akwbMSs0BBZMqKy3j6l3ALWh00j3Dj9vgHmcv'
-CAMPO_CUSTOM_POKEMON = 'custom_fields_37991201870491'  # ID do campo personalizado
+
+# IDs dos campos personalizados
+ID_CAMPO_GERACAO = 37991201870491  # VM - Pokeapi
+ID_CAMPO_GERACAO_1 = 38004431773211  # Substitua pelo ID real do campo "VM - Geração 1"
+ID_CAMPO_GERACAO_2 = 38004435047963  # Substitua pelo ID real do campo "VM - Geração 2"
+ID_CAMPO_GERACAO_3 = 38004428408347  # Substitua pelo ID real do campo "VM - Geração 3"
+
+CAMPOS_GERACAO = {
+    "geracao_1": ID_CAMPO_GERACAO_1,
+    "geracao_2": ID_CAMPO_GERACAO_2,
+    "geracao_3": ID_CAMPO_GERACAO_3,
+}
 
 def get_auth_header():
     auth = b64encode(f"{ZENDESK_EMAIL}:{ZENDESK_TOKEN}".encode()).decode()
@@ -46,7 +57,7 @@ def get_cor_tipo(tipo):
         "psychic": "#f0a7eb",
         "bug": "#b7c43e",
         "rock": "#c5b678",
-        "ghost": "#7d7cc0",   # forma correta adicionada
+        "ghost": "#7d7cc0",
         "dragon": "#8b7ceb",
         "steel": "#b7b6c0",
         "dark": "#8b6d5b"
@@ -66,15 +77,11 @@ def atualizar_ticket(ticket_id, pokemon):
         return False
 
     tipos = dados['tipos'].split(', ')
-    cor_fundo = get_cor_tipo(tipos[0])  # usa a cor do primeiro tipo do Pokémon
-
+    cor_fundo = get_cor_tipo(tipos[0])
     tipos_html = ''.join(render_tipo(tipo) for tipo in tipos)
 
-
-    # Corpo do comentário em HTML com CSS inline
     html_body = f"""
-    <div style="border: 1px solid #ccc; border-radius: 10px; padding: 16px; background-color: #f9f9f9; max-width: 300px; min-width: 300px;
-    ">
+    <div style="border: 1px solid #ccc; border-radius: 10px; padding: 16px; background-color: #f9f9f9; max-width: 300px; min-width: 300px;">
         <p style="margin: 0 0 10px 0; font-size: 1.2rem;">
             {dados['nome'].capitalize()}
         </p>
@@ -85,7 +92,8 @@ def atualizar_ticket(ticket_id, pokemon):
             <img src="{dados['imagem']}" alt="{dados['nome']}" style="max-width: 100px; margin-top: 10px;" />
         </div>
     </div>
-"""
+    """
+
     payload = {
         "ticket": {
             "comment": {
@@ -95,6 +103,7 @@ def atualizar_ticket(ticket_id, pokemon):
             "tags": ["-teste_pokeapi"]
         }
     }
+
     url = f"https://{ZENDESK_SUBDOMINIO}.zendesk.com/api/v2/tickets/{ticket_id}.json"
     res = requests.put(url, headers=get_auth_header(), json=payload)
     return res.status_code in [200, 201]
@@ -102,26 +111,36 @@ def atualizar_ticket(ticket_id, pokemon):
 @app.route('/webhook-pokeapi', methods=['POST'])
 def receber_webhook():
     data = request.json
-    
-    # LOG: mostrar o JSON recebido, formatado
+
     print("Recebido webhook JSON:")
     print(json.dumps(data, indent=2, ensure_ascii=False))
 
     ticket = data.get('ticket_event', {}).get('ticket', {})
-    
     campos_customizados = ticket.get('custom_fields', [])
+    
     print("Campos customizados recebidos:")
     print(json.dumps(campos_customizados, indent=2, ensure_ascii=False))
-    
-    pokemon = None
+
+    # Primeiro: detectar qual geração foi selecionada
+    geracao_selecionada = None
     for campo in campos_customizados:
-        if campo.get('id') == int(CAMPO_CUSTOM_POKEMON.replace('custom_fields_', '')):
-            pokemon_raw = campo.get('value')
-            if pokemon_raw and pokemon_raw.startswith("pokeapi_"):
-                pokemon = pokemon_raw[len("pokeapi_"):]
-            else:
-                pokemon = pokemon_raw
+        if campo.get('id') == ID_CAMPO_GERACAO:
+            geracao_selecionada = campo.get('value')
             break
+
+    # Segundo: identificar qual campo de Pokémon deve ser lido
+    id_campo_pokemon = CAMPOS_GERACAO.get(geracao_selecionada)
+    pokemon = None
+
+    if id_campo_pokemon:
+        for campo in campos_customizados:
+            if campo.get('id') == id_campo_pokemon:
+                pokemon_raw = campo.get('value')
+                if pokemon_raw and pokemon_raw.startswith("pokeapi_"):
+                    pokemon = pokemon_raw[len("pokeapi_"):]
+                else:
+                    pokemon = pokemon_raw
+                break
 
     print(f"Valor extraído do campo Pokémon: {pokemon}")
 
