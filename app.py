@@ -13,9 +13,9 @@ ZENDESK_TOKEN = 'RJ2akwbMSs0BBZMqKy3j6l3ALWh00j3Dj9vgHmcv'
 
 # IDs dos campos personalizados
 ID_CAMPO_GERACAO = 37991201870491  # VM - Pokeapi
-ID_CAMPO_GERACAO_1 = 38004431773211  # Substitua pelo ID real do campo "VM - Geração 1"
-ID_CAMPO_GERACAO_2 = 38004435047963  # Substitua pelo ID real do campo "VM - Geração 2"
-ID_CAMPO_GERACAO_3 = 38004428408347  # Substitua pelo ID real do campo "VM - Geração 3"
+ID_CAMPO_GERACAO_1 = 38004431773211
+ID_CAMPO_GERACAO_2 = 38004435047963
+ID_CAMPO_GERACAO_3 = 38004428408347
 
 CAMPOS_GERACAO = {
     "geracao_1": ID_CAMPO_GERACAO_1,
@@ -44,31 +44,17 @@ def buscar_dados_pokemon(nome):
 
 def get_cor_tipo(tipo):
     cores = {
-        "normal": "#74797c",
-        "fire": "#fd7d24",
-        "water": "#4592c4",
-        "grass": "#74993c",
-        "electric": "#bba729",
-        "ice": "#51c4e7",
-        "fighting": "#d56723",
-        "poison": "#b97fc9",
-        "ground": "#ab9842",
-        "flying": "#9aa7fa",
-        "psychic": "#f0a7eb",
-        "bug": "#b7c43e",
-        "rock": "#c5b678",
-        "ghost": "#7d7cc0",
-        "dragon": "#8b7ceb",
-        "steel": "#b7b6c0",
-        "dark": "#8b6d5b"
+        "normal": "#74797c", "fire": "#fd7d24", "water": "#4592c4", "grass": "#74993c",
+        "electric": "#bba729", "ice": "#51c4e7", "fighting": "#d56723", "poison": "#b97fc9",
+        "ground": "#ab9842", "flying": "#9aa7fa", "psychic": "#f0a7eb", "bug": "#b7c43e",
+        "rock": "#c5b678", "ghost": "#7d7cc0", "dragon": "#8b7ceb", "steel": "#b7b6c0", "dark": "#8b6d5b"
     }
-
     return cores.get(tipo.lower(), "#ccc")
 
 def render_tipo(tipo):
     cor = get_cor_tipo(tipo)
     return f"""
-    <span style=" display:inline-block; background-color:{cor}; color:#fff; padding:4px 8px; border-radius:6px; margin-right:6px; font-size:13px; font-weight:500; box-shadow:0 0 6px #00000040;">{tipo.capitalize()}</span>
+    <span style="display:inline-block; background-color:{cor}; color:#fff; padding:4px 8px; border-radius:6px; margin-right:6px; font-size:13px; font-weight:500; box-shadow:0 0 6px #00000040;">{tipo.capitalize()}</span>
     """
 
 def atualizar_ticket(ticket_id, pokemon):
@@ -117,18 +103,24 @@ def receber_webhook():
 
     ticket = data.get('ticket_event', {}).get('ticket', {})
     campos_customizados = ticket.get('custom_fields', [])
-    
+
     print("Campos customizados recebidos:")
     print(json.dumps(campos_customizados, indent=2, ensure_ascii=False))
 
-    # Primeiro: detectar qual geração foi selecionada
+    # Extrair a geração correta (remover "pokeapi_" do início)
     geracao_selecionada = None
     for campo in campos_customizados:
         if campo.get('id') == ID_CAMPO_GERACAO:
-            geracao_selecionada = campo.get('value')
+            valor = campo.get('value')
+            if valor and valor.startswith("pokeapi_"):
+                geracao_selecionada = valor.replace("pokeapi_", "")
+            else:
+                geracao_selecionada = valor
             break
 
-    # Segundo: identificar qual campo de Pokémon deve ser lido
+    print(f"Geração selecionada: {geracao_selecionada}")
+
+    # Obter ID do campo de Pokémon conforme a geração
     id_campo_pokemon = CAMPOS_GERACAO.get(geracao_selecionada)
     pokemon = None
 
