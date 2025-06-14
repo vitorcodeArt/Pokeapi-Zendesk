@@ -31,36 +31,54 @@ def buscar_dados_pokemon(nome):
         "imagem": dados['sprites']['other']['showdown']['front_default']
     }
 
+def render_tipo(tipo):
+    return f"""
+    <span style="
+        display:inline-block;
+        background-color:#eee;
+        color:#333;
+        padding:4px 8px;
+        border-radius:6px;
+        margin-right:6px;
+        font-size:13px;
+        font-weight:500;
+        box-shadow:0 0 6px #00000040;
+    ">
+        {tipo}
+    </span>
+    """
+
 def atualizar_ticket(ticket_id, pokemon):
     dados = buscar_dados_pokemon(pokemon)
     if not dados:
         return False
 
     # Gera os spans dos tipos com estilo inline
-    tipos_html = ''.join(
-        f"<span style='"
-        f"display:inline-block;"
-        f"background-color:#eee;"
-        f"color:#333;"
-        f"padding:4px 8px;"
-        f"border-radius:6px;"
-        f"margin-right:6px;"
-        f"font-size:13px;"
-        f"font-weight:500;"
-        f"'>"
-        f"{tipo}</span>"
-        for tipo in dados['tipos'].split(', ')
-    )
+    tipos_html = ''.join(render_tipo(tipo) for tipo in dados['tipos'].split(', '))
 
     # Corpo do comentário em HTML com CSS inline
     html_body = f"""
-        <p><strong style="font-size:16px;">Nome:</strong> {dados['nome'].capitalize()}</p>
-        <p><strong style="font-size:16px;">Tipo(s):</strong> {tipos_html}</p>
-        <p>
-            <img src="{dados['imagem']}" alt="{dados['nome']}" 
-                 style="margin-top:10px;max-width:120px;" />
+    <div style="
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 16px;
+        background-color: #f9f9f9;
+        font-family: Arial, sans-serif;
+        max-width: 300px;
+    ">
+        <p style="margin: 0 0 10px 0;">
+            <strong style="font-size: 16px; color: #333;">Nome:</strong>
+            {dados['nome'].capitalize()}
         </p>
-    """
+        <p style="margin: 0 0 10px 0;">
+            <strong style="font-size: 16px; color: #333;">Tipo(s):</strong><br />
+            {tipos_html}
+        </p>
+        <div style="text-align: center;">
+            <img src="{dados['imagem']}" alt="{dados['nome']}" style="max-width: 100px; margin-top: 10px;" />
+        </div>
+    </div>
+"""
     payload = {
         "ticket": {
             "comment": {
