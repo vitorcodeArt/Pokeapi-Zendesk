@@ -70,7 +70,11 @@ def receber_webhook():
     pokemon = None
     for campo in campos_customizados:
         if campo.get('id') == int(CAMPO_CUSTOM_POKEMON.replace('custom_fields_', '')):
-            pokemon = campo.get('value')
+            pokemon_raw = campo.get('value')
+            if pokemon_raw and pokemon_raw.startswith("pokeapi_"):
+                pokemon = pokemon_raw[len("pokeapi_"):]
+            else:
+                pokemon = pokemon_raw
             break
 
     print(f"Valor extraído do campo Pokémon: {pokemon}")
