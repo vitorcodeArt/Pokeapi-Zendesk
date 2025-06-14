@@ -65,9 +65,9 @@ def atualizar_ticket(ticket_id, pokemon):
     if not dados:
         return False
 
+    tipos = dados['tipos'].split(', ')
     cor_fundo = get_cor_tipo(tipos[0])  # usa a cor do primeiro tipo do Pokémon
 
-    tipos = dados['tipos'].split(', ')
     tipos_html = ''.join(render_tipo(tipo) for tipo in tipos)
 
 
