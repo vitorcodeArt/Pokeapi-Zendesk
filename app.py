@@ -81,7 +81,7 @@ def atualizar_ticket(ticket_id, pokemon):
         <p style="margin: 0 0 10px 0;">
             {tipos_html}
         </p>
-        <div style="text-align: center; height: 130px; display: flex; justify-items: center; border-radius: 16px; background: linear-gradient(145deg, {cor_fundo}50, transparent); padding: 12px;">
+        <div style="text-align: center; height: 130px; display: flex; justify-content: center; border-radius: 16px; background: linear-gradient(145deg, {cor_fundo}50, transparent); padding: 12px;">
             <img src="{dados['imagem']}" alt="{dados['nome']}" style="max-width: 100px; margin-top: 10px;" />
         </div>
     </div>
