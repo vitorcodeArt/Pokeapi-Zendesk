@@ -46,7 +46,6 @@ def render_tipo(tipo):
         "psychic": "#f0a7eb",
         "bug": "#b7c43e",
         "rock": "#c5b678",
-        "ghoust": "#7d7cc0",  # parece um erro de digitação, seria "ghost"?
         "ghost": "#7d7cc0",   # forma correta adicionada
         "dragon": "#8b7ceb",
         "steel": "#b7b6c0",
@@ -67,7 +66,7 @@ def atualizar_ticket(ticket_id, pokemon):
         return False
 
     # Gera os spans dos tipos com estilo inline
-   tipos_html = ''.join(render_tipo(tipo) for tipo in dados['tipos'].split(', '))
+    tipos_html = ''.join(render_tipo(tipo) for tipo in dados['tipos'].split(', '))
 
 
     # Corpo do comentário em HTML com CSS inline
