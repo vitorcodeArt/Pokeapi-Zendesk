@@ -31,22 +31,35 @@ def buscar_dados_pokemon(nome):
         "imagem": dados['sprites']['other']['showdown']['front_default']
     }
 
-# def render_tipo(tipo):
-#     return f"""
-#     <span style="
-#         display:inline-block;
-#         background-color:#eee;
-#         color:#333;
-#         padding:4px 8px;
-#         border-radius:6px;
-#         margin-right:6px;
-#         font-size:13px;
-#         font-weight:500;
-#         box-shadow:0 0 6px #00000040;
-#     ">
-#         {tipo}
-#     </span>
-#     """
+def render_tipo(tipo):
+    cores = {
+        "normal": "#74797c",
+        "fire": "#fd7d24",
+        "water": "#4592c4",
+        "grass": "#74993c",
+        "electric": "#bba729",
+        "ice": "#51c4e7",
+        "fighting": "#d56723",
+        "poison": "#b97fc9",
+        "ground": "#ab9842",
+        "flying": "#9aa7fa",
+        "psychic": "#f0a7eb",
+        "bug": "#b7c43e",
+        "rock": "#c5b678",
+        "ghoust": "#7d7cc0",  # parece um erro de digitação, seria "ghost"?
+        "ghost": "#7d7cc0",   # forma correta adicionada
+        "dragon": "#8b7ceb",
+        "steel": "#b7b6c0",
+        "dark": "#8b6d5b"
+    }
+
+    cor = cores.get(tipo.lower(), "#ccc")  # cor padrão se o tipo não for encontrado
+    return f"""
+    <span style=" display:inline-block; background-color:{cor}; color:#fff; padding:4px 8px; border-radius:6px; margin-right:6px; font-size:13px; font-weight:500; box-shadow:0 0 6px #00000040;
+    ">
+        {tipo.capitalize()}
+    </span>
+    """
 
 def atualizar_ticket(ticket_id, pokemon):
     dados = buscar_dados_pokemon(pokemon)
@@ -54,14 +67,8 @@ def atualizar_ticket(ticket_id, pokemon):
         return False
 
     # Gera os spans dos tipos com estilo inline
-    tipos_html = ''.join([
-    f"""
-    <span style=" display:inline-block; background-color:#eee; color:#333; padding:4px 8px; border-radius:6px; margin-right:6px; font-size:13px; font-weight:500; box-shadow:0 0 6px #00000040;
-    ">
-        {tipo}
-    </span>
-    """ for tipo in dados['tipos'].split(', ')
-])
+   tipos_html = ''.join(render_tipo(tipo) for tipo in dados['tipos'].split(', '))
+
 
     # Corpo do comentário em HTML com CSS inline
     html_body = f"""
