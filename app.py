@@ -101,8 +101,18 @@ def receber_webhook():
     print("Recebido webhook JSON:")
     print(json.dumps(data, indent=2, ensure_ascii=False))
 
-    ticket = data.get('ticket_event', {}).get('ticket', {})
-    campos_customizados = ticket.get('custom_fields', [])
+    ticket_id = data.get('ticket_event', {}).get('ticket', {}).get('id')
+    if not ticket_id:
+        return jsonify({"error": "ID do ticket não encontrado"}), 400
+
+    # Requisição para buscar o ticket completo via API
+    url = f"https://{ZENDESK_SUBDOMINIO}.zendesk.com/api/v2/tickets/{ticket_id}.json"
+    res = requests.get(url, headers=get_auth_header())
+    if res.status_code != 200:
+        return jsonify({"error": "Falha ao buscar ticket completo"}), 400
+
+    ticket = res.json().get("ticket", {})
+    campos_customizados = ticket.get("custom_fields", [])
 
     print("Campos customizados recebidos:")
     print(json.dumps(campos_customizados, indent=2, ensure_ascii=False))
