@@ -28,7 +28,7 @@ def buscar_dados_pokemon(nome):
     return {
         "nome": dados['name'],
         "tipos": ', '.join(t['type']['name'] for t in dados['types']),
-        "imagem": dados['sprites']['front_default']
+        "imagem": dados['sprites']['other']['showdown']['front_default']
     }
 
 def atualizar_ticket(ticket_id, pokemon):
