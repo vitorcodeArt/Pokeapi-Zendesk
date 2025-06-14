@@ -56,16 +56,7 @@ def atualizar_ticket(ticket_id, pokemon):
     # Gera os spans dos tipos com estilo inline
     tipos_html = ''.join([
     f"""
-    <span style="
-        display:inline-block;
-        background-color:#eee;
-        color:#333;
-        padding:4px 8px;
-        border-radius:6px;
-        margin-right:6px;
-        font-size:13px;
-        font-weight:500;
-        box-shadow:0 0 6px #00000040;
+    <span style=" display:inline-block; background-color:#eee; color:#333; padding:4px 8px; border-radius:6px; margin-right:6px; font-size:13px; font-weight:500; box-shadow:0 0 6px #00000040;
     ">
         {tipo}
     </span>
