@@ -35,11 +35,32 @@ def atualizar_ticket(ticket_id, pokemon):
     dados = buscar_dados_pokemon(pokemon)
     if not dados:
         return False
-    html_body = (
-        f"<p><strong>Nome:</strong> {dados['nome'].capitalize()}</p>"
-        f"<p><strong>Tipo(s):</strong> {dados['tipos']}</p>"
-        f"<p><img src='{dados['imagem']}' alt='{dados['nome']}' /></p>"
+
+    # Gera os spans dos tipos com estilo inline
+    tipos_html = ''.join(
+        f"<span style='"
+        f"display:inline-block;"
+        f"background-color:#eee;"
+        f"color:#333;"
+        f"padding:4px 8px;"
+        f"border-radius:6px;"
+        f"margin-right:6px;"
+        f"font-size:13px;"
+        f"font-weight:500;"
+        f"'>"
+        f"{tipo}</span>"
+        for tipo in dados['tipos'].split(', ')
     )
+
+    # Corpo do comentário em HTML com CSS inline
+    html_body = f"""
+        <p><strong style="font-size:16px;">Nome:</strong> {dados['nome'].capitalize()}</p>
+        <p><strong style="font-size:16px;">Tipo(s):</strong> {tipos_html}</p>
+        <p>
+            <img src="{dados['imagem']}" alt="{dados['nome']}" 
+                 style="margin-top:10px;max-width:120px;" />
+        </p>
+    """
     payload = {
         "ticket": {
             "comment": {
