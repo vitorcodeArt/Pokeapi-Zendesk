@@ -1,6 +1,7 @@
 import requests
 from flask import Flask, request, jsonify
 from base64 import b64encode
+import os
 
 app = Flask(__name__)
 
@@ -109,6 +110,7 @@ def criar_ticket_exemplo(pokemon):
         print(res.text)
 
 if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
     # Apenas para teste local — pode comentar se estiver rodando em produção
     # criar_ticket_exemplo("bulbasaur")
-    app.run(port=3000)
