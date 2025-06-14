@@ -31,7 +31,7 @@ def buscar_dados_pokemon(nome):
         "imagem": dados['sprites']['other']['showdown']['front_default']
     }
 
-def render_tipo(tipo):
+def get_cor_tipo(tipo):
     cores = {
         "normal": "#74797c",
         "fire": "#fd7d24",
@@ -52,12 +52,12 @@ def render_tipo(tipo):
         "dark": "#8b6d5b"
     }
 
-    cor = cores.get(tipo.lower(), "#ccc")  # cor padrão se o tipo não for encontrado
+    return cores.get(tipo.lower(), "#ccc")
+
+def render_tipo(tipo):
+    cor = get_cor_tipo(tipo)
     return f"""
-    <span style=" display:inline-block; background-color:{cor}; color:#fff; padding:4px 8px; border-radius:6px; margin-right:6px; font-size:13px; font-weight:500; box-shadow:0 0 6px #00000040;
-    ">
-        {tipo.capitalize()}
-    </span>
+    <span style=" display:inline-block; background-color:{cor}; color:#fff; padding:4px 8px; border-radius:6px; margin-right:6px; font-size:13px; font-weight:500; box-shadow:0 0 6px #00000040;">{tipo.capitalize()}</span>
     """
 
 def atualizar_ticket(ticket_id, pokemon):
@@ -65,11 +65,10 @@ def atualizar_ticket(ticket_id, pokemon):
     if not dados:
         return False
 
-    tipos = dados['tipos'].split(', ')
     cor_fundo = get_cor_tipo(tipos[0])  # usa a cor do primeiro tipo do Pokémon
 
-    # Gera os spans dos tipos com estilo inline
-    tipos_html = ''.join(render_tipo(tipo) for tipo in dados['tipos'].split(', '))
+    tipos = dados['tipos'].split(', ')
+    tipos_html = ''.join(render_tipo(tipo) for tipo in tipos)
 
 
     # Corpo do comentário em HTML com CSS inline
