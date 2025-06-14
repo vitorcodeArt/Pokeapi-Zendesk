@@ -65,6 +65,9 @@ def atualizar_ticket(ticket_id, pokemon):
     if not dados:
         return False
 
+    tipos = dados['tipos'].split(', ')
+    cor_fundo = get_cor_tipo(tipos[0])  # usa a cor do primeiro tipo do Pokémon
+
     # Gera os spans dos tipos com estilo inline
     tipos_html = ''.join(render_tipo(tipo) for tipo in dados['tipos'].split(', '))
 
@@ -79,7 +82,7 @@ def atualizar_ticket(ticket_id, pokemon):
         <p style="margin: 0 0 10px 0;">
             {tipos_html}
         </p>
-        <div style="text-align: center;">
+        <div style="text-align: center; border-radius: 16px; background: linear-gradient(145deg, {cor_fundo}50, transparent); padding: 12px;">
             <img src="{dados['imagem']}" alt="{dados['nome']}" style="max-width: 100px; margin-top: 10px;" />
         </div>
     </div>
