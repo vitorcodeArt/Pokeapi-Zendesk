@@ -78,13 +78,6 @@ def atualizar_ticket(ticket_id, pokemon):
             <img src="{dados['imagem']}" alt="{dados['nome']}" style="max-width: 100px; margin-top: 10px;" />
         </div>
     </div>
-    <style>
-      .fundo:hover {
-        background-color: blue;
-        color: white;
-        transition: .3s;
-      }
-    </style>
     """
 
     payload = {
