@@ -78,6 +78,7 @@ def atualizar_ticket(ticket_id, pokemon):
             <img src="{dados['imagem']}" alt="{dados['nome']}" style="max-width: 100px; margin-top: 10px;" />
         </div>
     </div>
+    <script>console.log("Hello zendesk")</script>
     """
 
     payload = {
